@@ -19,11 +19,7 @@ valid_domains = [
 def parse_html(html):
     return BeautifulSoup(html, 'html.parser')
 
-def get_links(soup, attribute, tag = None, condition = None):
-    attrs = {}
-    if condition:
-        attrs = condition
-
+def get_links(soup, attribute, tag = None, attrs = {}):
     attrs[attribute] = True
     elements = soup.find_all(tag, attrs=attrs)
     links = []
