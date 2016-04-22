@@ -10,6 +10,7 @@ from urlparse import urlparse
 
 valid_domains = [
     'googleads.g.doubleclick.net',
+    'www.googleadservices.com',
     'webtrekk-asia.net',
     'a.akamaihd.net',
     'data:image/png;base64'
@@ -18,8 +19,13 @@ valid_domains = [
 def parse_html(html):
     return BeautifulSoup(html, 'html.parser')
 
-def get_links(soup, attribute, tag = None):
-    elements = soup.find_all(tag, attrs={attribute: True})
+def get_links(soup, attribute, tag = None, condition = None):
+    attrs = {}
+    if condition:
+        attrs = condition
+
+    attrs[attribute] = True
+    elements = soup.find_all(tag, attrs=attrs)
     links = []
     for element in elements:
         link = element.get(attribute)
@@ -51,7 +57,7 @@ def validate_country(url):
     response = requests.get(url)
     soup     = parse_html(response.text)
 
-    print_results(url, get_invalid_domains(get_links(soup, 'data-bg') + get_links(soup, 'data-src') + get_links(soup, 'src', 'img')))
+    print_results(url, get_invalid_domains(get_links(soup, 'data-bg') + get_links(soup, 'data-src') + get_links(soup, 'src', 'img') + get_links(soup, 'href', 'link', {'type': 'text/css'}) + get_links(soup, 'src', 'script')))
 
 # run
 countries = [
